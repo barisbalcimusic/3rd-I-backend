@@ -37,6 +37,11 @@ export const imageToText = async (req, res, next) => {
           },
         ],
       },
+      {
+        role: "system",
+        content:
+          "You are a helpful assistant providing blind users concise, 20-word max descriptions of surroundings, navigation routes, obstacles, entrances, and exits. No questions.",
+      },
     ],
     max_tokens: 300,
   };
