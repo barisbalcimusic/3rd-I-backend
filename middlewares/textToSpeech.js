@@ -31,16 +31,22 @@ export const textToSpeech = async (req, res) => {
       }
     );
 
-    const filePath = "./public/generated_audio.mp3";
-    fs.writeFileSync(filePath, response.data);
-
-    console.log("Audio file saved as generated_audio.mp3");
-    res.json({ audioUrl: "/generated_audio.mp3" });
+    res.set("Content-Type", "audio/mpeg");
+    res.send(response.data);
   } catch (error) {
-    console.error(
-      "Error generating voice-over:",
-      error.response ? error.response.data : error.message
-    );
+    if (error.response && error.response.data) {
+      try {
+        const errorData = JSON.parse(error.response.data.toString("utf-8"));
+        console.error("Error generating voice-over:", errorData);
+      } catch (parseError) {
+        console.error(
+          "Error parsing response data:",
+          error.response.data.toString("utf-8")
+        );
+      }
+    } else {
+      console.error("Error generating voice-over:", error.message);
+    }
     return res.status(500).json({ error: "Failed to generate voice-over." });
   }
 };
